@@ -2,6 +2,10 @@
 __pycache__/
 *.py[cod]
 *$py.class
+artifacts
+logs
+.idea/
+test2.py
 
 # C extensions
 *.so

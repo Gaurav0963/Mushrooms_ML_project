@@ -8,6 +8,7 @@ from soruce_code.exception import CustomException
 from soruce_code.utils import get_df_from_mongo, missing_val_columns
 from soruce_code import utils
 from soruce_code.entity.config_entity import DataIngestionConfig
+from soruce_code.entity.artifact_entity import DataIngestionArtifact
 
 from sklearn.model_selection import train_test_split
 
@@ -58,9 +59,16 @@ class DataIngestion:
 
             logging.info("Data-Ingestion completed")
 
-            return (
-                self.data_ingestion_config.train_file_path,
-                self.data_ingestion_config.test_file_path
+            data_ingestion_artifact = DataIngestionArtifact(
+                train_file_path=self.data_ingestion_config.train_file_path,
+                test_file_path=self.data_ingestion_config.test_file_path
             )
+
+            return data_ingestion_artifact
+
+            # return (
+            #     self.data_ingestion_config.train_file_path,
+            #     self.data_ingestion_config.test_file_path
+            # )
         except Exception as e:
             raise CustomException(e, sys)
