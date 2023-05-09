@@ -5,7 +5,7 @@ from datetime import datetime
 LOG_FILE_NAME = f"{datetime.now().strftime('%d_%m_%Y_%H_%M_%S')}.log"
 os.chdir("D:\\VSCode\\MushroomML")
 LOG_FILE_DIR = os.path.join(os.getcwd(), "logs")
-print(os.getcwd())
+# print(os.getcwd())
 
 os.makedirs(LOG_FILE_DIR, exist_ok=True)
 
