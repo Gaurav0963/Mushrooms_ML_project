@@ -1,16 +1,16 @@
 import os
 import sys
+import pickle
 import pymongo
-import pandas as pd
 import numpy as np
+import pandas as pd
 from typing import List
 import scipy.stats as ss
 from scipy.stats import chi2_contingency
-import pickle
 
-from soruce_code.entity.config_entity import DataIngestionConfig
-from soruce_code.exception import CustomException
-from soruce_code.logger import logging
+from source_code.logger import logging
+from source_code.exception import CustomException
+from source_code.entity.config_entity import DataIngestionConfig
 
 MONGO_DB_URL = os.environ.get('MONGO_DB_URL')
 
@@ -129,7 +129,8 @@ def save_numpy_array_data(path: str, array: np.array):
         dir_path = os.path.dirname(path)
         os.makedirs(dir_path, exist_ok=True)
         with open(path, "wb") as file_obj:
-            np.save(file_obj, array)
+            np.save(file=file_obj, arr=array)
+            # np.save(file_obj, array)
     except Exception as e:
         raise CustomException(e, sys) from e
 
@@ -142,13 +143,6 @@ def load_numpy_array_data(path: str) -> np.array:
     """
     try:
         with open(path, "rb") as file_obj:
-            return np.load(file_obj)
+            return np.load(file=file_obj)
     except Exception as e:
         raise CustomException(e, sys) from e
-
-
-if __name__ == "__main__":
-    df = get_df_from_mongo('mushrooms_data', 'mushroom')
-    print(df.shape)
-    dcl = drop_missing_val_columns(df)
-    print(dcl)

@@ -2,21 +2,19 @@ import sys
 from typing import Optional, Any
 
 import pandas as pd
-import numpy as np
-from statsmodels.stats.outliers_influence import variance_inflation_factor
+# from statsmodels.stats.outliers_influence import variance_inflation_factor
 
-from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
-from sklearn.preprocessing import StandardScaler, LabelEncoder
-from sklearn.preprocessing import OneHotEncoder
 from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.preprocessing import StandardScaler, LabelEncoder
 
-from soruce_code.entity import config_entity, artifact_entity
-from soruce_code.entity.config_entity import TARGET_COLUMN, DataTransformationConfig
-from soruce_code.exception import CustomException
-from soruce_code.logger import logging
-from soruce_code.utils import save_numpy_array_data, save_object, cramers_V
+from source_code.logger import logging
+from source_code.exception import CustomException
+from source_code.entity import config_entity, artifact_entity
+from source_code.utils import save_numpy_array_data, save_object, cramers_V
+from source_code.entity.config_entity import TARGET_COLUMN, DataTransformationConfig
 
 
 class ModifiedLabelEncoder(LabelEncoder):
@@ -36,8 +34,10 @@ class ModifiedLabelEncoder(LabelEncoder):
 
 
 class DataTransformation:
-    print("in DataTransformation...")
-
+    """
+    DataTransformation takes input as the artifacts of Data Ingestion process, pre-processes the data; saves the
+    training and testing numpy arrays in artifacts folder and returns the path of saved locations.
+    """
     def __init__(self, data_ingestion_artifact: artifact_entity.DataIngestionArtifact):
         logging.info(f"{'--' * 20} Data Transformation {'--' * 20}")
         self.data_ingestion_artifact = data_ingestion_artifact
@@ -45,14 +45,19 @@ class DataTransformation:
 
     @staticmethod
     def get_data_transformation_object(column_list: list):
+        """
+        This function pre-processes the given dataset
+        :param column_list: A list of names(str format) of input features
+        :return: An object of ColumnTransformer which combines input and target feature preprocessing Pipelines
+        """
         try:
-            dependent_pipe = Pipeline(steps=[("Imputer", SimpleImputer(strategy="most_frequent")),
-                                             ("OHE", OneHotEncoder(sparse_output=False)),
-                                             ("std_scaler", StandardScaler(with_mean=False))])
+            input_feature_pipe = Pipeline(steps=[("Imputer", SimpleImputer(strategy="most_frequent")),
+                                                 ("OHE", OneHotEncoder(sparse_output=False)),
+                                                 ("std_scaler", StandardScaler(with_mean=False))])
 
             target_pipe = Pipeline(steps=[("le", ModifiedLabelEncoder())])
 
-            transformer = ColumnTransformer([('pipe_1', dependent_pipe, column_list),
+            transformer = ColumnTransformer([('pipe_1', input_feature_pipe, column_list),
                                              ('target_encoding', target_pipe, TARGET_COLUMN)],
                                             remainder='drop')
             return transformer
@@ -60,7 +65,11 @@ class DataTransformation:
         except Exception as e:
             raise CustomException(e, sys)
 
-    def initiate_data_transformation(self):
+    def initiate_data_transformation(self) -> artifact_entity.DataTransformationArtifact:
+        """
+        This function initiates Data Transformation process
+        :return: paths of training numpy array, test numpy array and pre-processing object
+        """
         logging.info('Data Transformation initiated')
         try:
             logging.info('Reading Base Data')
@@ -85,13 +94,14 @@ class DataTransformation:
             logging.info("Pre-processing done: got Train & Test Numpy arrays")
 
             # Saving train_arr and test_arr numpy arrays
-            logging.info("Saving Train & Test Numpy array")
+            logging.info("Saving Train & Test Numpy arrays")
             save_numpy_array_data(path=self.data_transformation_config.train_np_arr_path, array=train_arr)
             save_numpy_array_data(path=self.data_transformation_config.test_np_arr_path, array=test_arr)
 
             # Saving pre-processor object path
             save_object(path=self.data_transformation_config.preprocessor_obj_path, obj=preprocess_obj)
 
+            logging.info('Preparing Artifacts')
             data_transformation_artifact = artifact_entity.DataTransformationArtifact(
                 preprocessor_object_path=self.data_transformation_config.preprocessor_obj_path,
                 train_arr_path=self.data_transformation_config.train_np_arr_path,
@@ -133,29 +143,6 @@ def get_associated_columns(dataframe: pd.DataFrame) -> Optional[list]:
 
         logging.info('NO ASSOCIATED COLUMNS FOUND.')
         return None
-
-    except Exception as e:
-        raise CustomException(e, sys)
-
-
-def required_columns_check(dataframe: pd.DataFrame) -> bool | list[Any] | Any:
-    """This function checks if the most correlated features of the dataset are present or not."""
-    try:
-        check_list = list()
-        missing_list = list()
-        imp_cols = config_entity.DataTransformationConfig.IMP_COLUMNS
-        for col in imp_cols:
-            if col in dataframe.columns:
-                check_list.append(col)
-            else:
-                missing_list.append(col)
-
-        if len(check_list) == len(imp_cols):
-            logging.info(f'All important columns are present: {check_list}')
-            return True
-
-        logging.info(f'Important columns are missing : {missing_list}')
-        return False
 
     except Exception as e:
         raise CustomException(e, sys)

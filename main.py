@@ -1,22 +1,17 @@
-from soruce_code.components.data_ingestion import DataIngestion
-from soruce_code.components.data_transformation import DataTransformation, get_associated_columns, required_columns_check
+from source_code.components.data_ingestion import DataIngestion
+from source_code.components.data_transformation import DataTransformation
+from source_code.components.model_trainer import ModelTrainer
 
 if __name__ == "__main__":
 
+    # Data-Ingestion
     data_ingestion = DataIngestion()
     data_ingestion_artifact = data_ingestion.initiate_data_ingestion()
-    print(data_ingestion_artifact.base_data_path)
-    print(data_ingestion_artifact.train_file_path)
-    print(data_ingestion_artifact.test_file_path)
 
-    # train = pd.read_csv(data_ingestion_artifact.train_file_path)
-    # print(train['odor'][0])
-
+    # Data-Transformation
     data_transform = DataTransformation(data_ingestion_artifact=data_ingestion_artifact)
-    obj = data_transform.initiate_data_transformation()
-    # obj, base_data = data_transform.initiate_data_transformation()
-    # get_corr = get_associated_columns(base_data)
-    # print(required_columns_check(base_data))
-    # print(base_data.columns)
-    # print(get_corr)
+    data_transformation_artifacts = data_transform.initiate_data_transformation()
 
+    # Model-Training
+    model_trainer = ModelTrainer(data_transformation_artifacts=data_transformation_artifacts)
+    model_trainer_artifact = model_trainer.initiate_model_training()
