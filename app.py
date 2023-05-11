@@ -48,16 +48,18 @@ def predict_datapoint():
             population=request.form.get("population"),
             habitat=request.form.get("habitat")
         )
+
+        logging.info("Getting Input data as Pandas DataFrame")
         pred_df = data.get_data_as_dataframe()
-        print(pred_df)
-        print("Before Prediction")
 
         predict_pipeline = PredictPipeline()
-        print("Mid Prediction")
+
         results = predict_pipeline.model_predict(pred_df)
-        print("after Prediction")
+
         return render_template('home.html', results=results)
+        # return render_template('predictions.html', results=results)
+        # return render_template('home_new.html', results=results, tables=[pred_df.to_html(classes='data')], titles=pred_df.columns.values)
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=1000, debug=True)
+    app.run(host="0.0.0.0", port=8500)

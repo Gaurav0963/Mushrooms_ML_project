@@ -7,6 +7,9 @@ logs
 .idea/
 test2.py
 test.py
+templates/home_new.html
+templates/predictions.html
+
 
 # C extensions
 *.so
@@ -125,7 +128,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
+environment.env
 .venv
 env/
 venv/

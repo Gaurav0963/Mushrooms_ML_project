@@ -38,7 +38,7 @@ class DataTransformation:
         """
         try:
             input_feature_pipe = Pipeline(steps=[("Imputer", SimpleImputer(strategy="most_frequent")),
-                                                 ("OHE", OneHotEncoder(sparse_output=False)),
+                                                 ("OHE", OneHotEncoder(sparse_output=False, handle_unknown="ignore")),
                                                  ("std_scaler", StandardScaler(with_mean=False))])
 
             transformer = ColumnTransformer([('pipe_1', input_feature_pipe, column_list)], remainder='drop')
@@ -59,6 +59,7 @@ class DataTransformation:
 
             logging.info("Encoding the TARGET feature")
             base_df[TARGET_COLUMN] = base_df[TARGET_COLUMN].map({'p': 0, 'e': 1})
+            logging.info(f"Value Counts after encoding: {base_df[TARGET_COLUMN].value_counts()}")
 
             logging.info('Splitting base dataframe into Input and Target features')
             input_feature_df = base_df.drop(TARGET_COLUMN, axis=1)
@@ -72,7 +73,6 @@ class DataTransformation:
 
             logging.info(f"Getting input features which are at-least {corr_threshold}% associated with Target feature")
             associated_columns = get_associated_columns(base_df)
-            print(associated_columns)
 
             preprocess_obj = self.get_data_transformation_object(associated_columns)
 

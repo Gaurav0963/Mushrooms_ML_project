@@ -1,52 +1,54 @@
 import sys
 import pandas as pd
 from source_code.logger import logging
-from path_resolver import PathResolver
 from source_code.utils import load_object
 from source_code.exception import CustomException
-from source_code.components.model_trainer import ModelTrainer
-from source_code.components.data_ingestion import DataIngestion
-from source_code.components.data_transformation import DataTransformation
+from path_resolver import latest_model_path, latest_preprocessor_path
 
 
 class PredictPipeline:
-    def __int__(self):
-        self.path_resolver = PathResolver()
+    def __int__(self): ...
 
     @staticmethod
-    def decode_prediction(prediction):
+    def decode_prediction(prediction) -> str:
+        """
+        :param prediction: Encoded Prediction value
+        :return: Decoded Prediction
+        """
         try:
             if prediction == 1:
-                return "Edible"
+                return " : Mushroom is Edible"
             elif prediction == 0:
-                return "Poisonous"
-
+                return " : Mushroom is Poisonous"
         except Exception as e:
             raise CustomException(e, sys)
 
     def model_predict(self, features: pd.DataFrame):
+        """
+        :param features: Input provided by user is collected as Pandas DataFrame
+        :return: Predicted Value by Model is returned
+        """
         try:
-            logging.info('Loading Pre-Processor and Model objects')
+            trained_model_path = latest_model_path()
+            logging.info(f"Latest Trained Model Path: {trained_model_path}")
 
-            pre_processor_obj_path = self.path_resolver.latest_preprocessor_path()
+            pre_processor_obj_path = latest_preprocessor_path()
             logging.info(f"Preprocessor object path: {pre_processor_obj_path}")
 
-            trained_model_path = self.path_resolver.latest_model_path()
-            logging.info(f"Trained Model Path: {trained_model_path}")
-
-            logging.info('Loading pre_processor and model objects')
+            logging.info('Loading Pre-Processor and Model objects')
             pre_processor = load_object(file_path=pre_processor_obj_path)
             model = load_object(file_path=trained_model_path)
 
-            print(features.shape)
-            print(features.columns)
+            logging.info(f"Input Feature shape: {features.shape}")
 
-            logging.info('Pre-processing input from user')
+            logging.info('Processing the input features provided by user')
             scaled_features = pre_processor.transform(features)
 
-            logging.info('Making Predictions')
             predictions_val = model.predict(scaled_features)
+            logging.info(f"Decoding Predictions made : {predictions_val}")
+
             predictions = self.decode_prediction(predictions_val)
+            logging.info(f"Decoded Prediction: {predictions}")
 
             return predictions
 
@@ -82,7 +84,10 @@ class CustomData:
         self.population = population
         self.habitat = habitat
 
-    def get_data_as_dataframe(self):
+    def get_data_as_dataframe(self) -> pd.DataFrame:
+        """
+        :return: Input data as Pandas DataFrame
+        """
         try:
             custom_data_dict = {
                 "cap-shape": [self.cap_shape],

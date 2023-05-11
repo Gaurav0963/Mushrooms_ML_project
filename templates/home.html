@@ -235,9 +235,9 @@
             <label class="form-label">Ring number</label>
                 <select class="form-select" name="ring_number" required aria-label="Default select example">
                     <option style="display: none;" value="" selected>Select</option>
-                    <option value="1">none=n</option>
-                    <option value="2">one=o</option>
-                    <option value="3">two=t</option>
+                    <option value="n">none=n</option>
+                    <option value="o">one=o</option>
+                    <option value="t">two=t</option>
                 </select>
         </div>
 
@@ -298,13 +298,13 @@
                     <option value="d">woods=d</option>
                 </select>
         </div>
-        <div class="mb-3">
-            <input class="btn btn-primary button" type="submit" value="Predict" required />
-        </div>
     </div>
- </form>
-    <h2>
-       The Mushroom is {{results}}
-    </h2>
+    <div class="mb-3" id="button">
+        <input class="btn btn-primary button" type="submit" value="Predict" required />
+    </div>
+</form>
+<div class="prediction">
+        <h2>Prediction {{results}}</h2>
+    </div>
 </body>
 </html>
