@@ -9,8 +9,6 @@ from source_code.exception import CustomException
 from source_code.logger import logging
 from source_code import utils
 
-from sklearn.model_selection import train_test_split
-
 
 class DataIngestion:
     def __init__(self):
@@ -48,28 +46,13 @@ class DataIngestion:
             df.drop(single_unique_val_col_list, axis=1, inplace=True)
 
             # Making directory to store all paths. Test & raw_data paths are also stored in same dir
-            os.makedirs(os.path.dirname(self.data_ingestion_config.train_file_path), exist_ok=True)
+            os.makedirs(os.path.dirname(self.data_ingestion_config.base_data_path), exist_ok=True)
 
             logging.info('Saving base_data_file to artifacts folder')
             df.to_csv(self.data_ingestion_config.base_data_path, index=False, header=True)
 
-            logging.info("Splitting base data into train & test set")
-            test_size = self.data_ingestion_config.TEST_DATA_SIZE
-            logging.info(f"test data size : {test_size*100}% of base data")
-            train_set, test_set = train_test_split(df, test_size=test_size, random_state=42)
-
-            logging.info('Saving train-set to artifacts folder')
-            train_set.to_csv(self.data_ingestion_config.train_file_path, index=False, header=True)
-
-            logging.info('Saving test-set to artifacts folder')
-            test_set.to_csv(self.data_ingestion_config.test_file_path, index=False, header=True)
-
             logging.info('Preparing Artifacts')
-            data_ingestion_artifact = DataIngestionArtifact(
-                base_data_path=self.data_ingestion_config.base_data_path,
-                train_file_path=self.data_ingestion_config.train_file_path,
-                test_file_path=self.data_ingestion_config.test_file_path
-            )
+            data_ingestion_artifact = DataIngestionArtifact(base_data_path=self.data_ingestion_config.base_data_path)
 
             logging.info("Data-Ingestion completed.")
             return data_ingestion_artifact

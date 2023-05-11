@@ -1,6 +1,7 @@
 import sys
 from typing import Optional, Any
 
+import numpy as np
 import pandas as pd
 # from statsmodels.stats.outliers_influence import variance_inflation_factor
 
@@ -8,29 +9,14 @@ from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder
-from sklearn.preprocessing import StandardScaler, LabelEncoder
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
 
 from source_code.logger import logging
 from source_code.exception import CustomException
 from source_code.entity import config_entity, artifact_entity
 from source_code.utils import save_numpy_array_data, save_object, cramers_V
 from source_code.entity.config_entity import TARGET_COLUMN, DataTransformationConfig
-
-
-class ModifiedLabelEncoder(LabelEncoder):
-    """
-    This class modifies LabelEncoder class to work properly with scikit-learn Pipeline.
-    """
-    try:
-        def fit_transform(self, y, *args, **kwargs):
-            return super().fit_transform(y).reshape(-1, 1)
-
-        def transform(self, y, *args, **kwargs):
-            return super().transform(y).reshape(-1, 1)
-
-    except Exception as e:
-        logging.warning('ModifiedLabelEncoder malfunctioned')
-        raise CustomException(e, sys)
 
 
 class DataTransformation:
@@ -48,18 +34,14 @@ class DataTransformation:
         """
         This function pre-processes the given dataset
         :param column_list: A list of names(str format) of input features
-        :return: An object of ColumnTransformer which combines input and target feature preprocessing Pipelines
+        :return: An object of ColumnTransformer object which pre-process input features
         """
         try:
             input_feature_pipe = Pipeline(steps=[("Imputer", SimpleImputer(strategy="most_frequent")),
                                                  ("OHE", OneHotEncoder(sparse_output=False)),
                                                  ("std_scaler", StandardScaler(with_mean=False))])
 
-            target_pipe = Pipeline(steps=[("le", ModifiedLabelEncoder())])
-
-            transformer = ColumnTransformer([('pipe_1', input_feature_pipe, column_list),
-                                             ('target_encoding', target_pipe, TARGET_COLUMN)],
-                                            remainder='drop')
+            transformer = ColumnTransformer([('pipe_1', input_feature_pipe, column_list)], remainder='drop')
             return transformer
 
         except Exception as e:
@@ -75,23 +57,35 @@ class DataTransformation:
             logging.info('Reading Base Data')
             base_df = pd.read_csv(self.data_ingestion_artifact.base_data_path)
 
-            logging.info('Reading Train and Test data')
-            train_df = pd.read_csv(self.data_ingestion_artifact.train_file_path)
-            test_df = pd.read_csv(self.data_ingestion_artifact.test_file_path)
+            logging.info("Encoding the TARGET feature")
+            base_df[TARGET_COLUMN] = base_df[TARGET_COLUMN].map({'p': 0, 'e': 1})
 
-            # logging.info('Checking if dataframe has required columns')
+            logging.info('Splitting base dataframe into Input and Target features')
+            input_feature_df = base_df.drop(TARGET_COLUMN, axis=1)
+            target_feature_df = base_df[TARGET_COLUMN]
+
+            logging.info('Splitting Input and Target features into Train and Test sets')
+            X_train, X_test, y_train, y_test = train_test_split(
+                input_feature_df, target_feature_df, test_size=0.2, random_state=42)
+
             corr_threshold = config_entity.DataTransformationConfig.CORRELATION_THRESHOLD_VALUE
 
             logging.info(f"Getting input features which are at-least {corr_threshold}% associated with Target feature")
             associated_columns = get_associated_columns(base_df)
+            print(associated_columns)
 
             preprocess_obj = self.get_data_transformation_object(associated_columns)
 
             logging.info("Pre-processing Train and Test DataFrame")
-            train_arr = preprocess_obj.fit_transform(train_df)
-            test_arr = preprocess_obj.transform(test_df)
+            X_train_arr = preprocess_obj.fit_transform(X_train)
+            X_test_arr = preprocess_obj.transform(X_test)
+            logging.info("Pre-processing done: got X_Train_arr & X_Test_arr Numpy arrays")
 
-            logging.info("Pre-processing done: got Train & Test Numpy arrays")
+            logging.info('Concatenating x_train_arr and y_train to a training Numpy array dataset')
+            train_arr = np.c_[X_train_arr, np.array(y_train)]
+
+            logging.info('Concatenating X_test_arr and y_test to a testing Numpy array dataset')
+            test_arr = np.c_[X_test_arr, np.array(y_test)]
 
             # Saving train_arr and test_arr numpy arrays
             logging.info("Saving Train & Test Numpy arrays")

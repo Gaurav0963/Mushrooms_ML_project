@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+<form action="{{ url_for('predict_datapoint') }}" method="post">
+    <h1 class="title">
+        <legend>Mushroom Edible or Poisonous Prediction</legend>
+    </h1>
+    <div class="flex-container">
+        <div class="mb-3">
+            <label class="form-label">Cap shape</label>
+                <select class="form-select" name="cap_shape" required aria-label="Default select example">
+                    <option style="display: none;" value="" selected>Select</option>
+                    <option value="b">bell=b</option>
+                    <option value="c">conical=c</option>
+                    <option value="x">convex=x</option>
+                    <option value="f">flat=f</option>
+                    <option value="k">knobbed=k</option>
+                    <option value="s">sunken=s</option>
+                    <option value="?">data missing</option>
+                </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Cap surface</label>
+                <select class="form-select" name="cap_surface" required aria-label="Default select example">
+                    <option style="display: none;" value="" selected>Select</option>
+                    <option value="f">fibrous=f</option>
+                    <option value="g">grooves=g</option>
+                    <option value="y">scaly=y</option>
+                    <option value="s">smooth=s</option>
+                    <option value="?">data missing</option>
+                </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Cap color</label>
+                <select class="form-select" name="cap_color" required aria-label="Default select example">
+                    <option style="display: none;" value="" selected>Select</option>
+                    <option value="n">brown=n</option>
+                    <option value="b">buff=b</option>
+                    <option value="g">gray=g</option>
+                    <option value="r">green=r</option>
+                    <option value="p">pink=p</option>
+                    <option value="u">purple=u</option>
+                    <option value="e">red=e</option>
+                    <option value="w">white=w</option>
+                    <option value="y">yellow=y</option>
+                    <option value="?">data missing</option>
+                </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Bruises</label>
+                <select class="form-select" name="bruises" required aria-label="Default select example">
+                    <option style="display: none;" value="" selected>Select</option>
+                    <option value="t">bruises=t</option>
+                    <option value="f">no=f</option>
+                </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Odor </label>
+                <select class="form-select" name="odor" required aria-label="Default select example">
+                    <option style="display: none;" value="" selected>Select</option>
+                    <option value="a">almond=a</option>
+                    <option value="l">anise=l</option>
+                    <option value="c">creosote=c</option>
+                    <option value="y">fishy=y</option>
+                    <option value="f">foul=f</option>
+                    <option value="m">musty=m</option>
+                    <option value="n">none=n</option>
+                    <option value="p">pungent=p</option>
+                    <option value="s">spicy=s</option>
+                </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Gill attachment</label>
+                <select class="form-select" name="gill_attachment" aria-label="Default select example">
+                    <option style="display: none;" value="" selected>Select</option>
+                    <option value="a">attached=a</option>
+                    <option value="d">descending=d</option>
+                    <option value="f">free=f</option>
+                    <option value="n">notched=n</option>
+                    <option value="?">data missing</option>
+                </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Gill spacing</label>
+                <select class="form-select" name="gill_spacing" aria-label="Default select example">
+                    <option style="display: none;" value="" selected>Select</option>
+                    <option value="c">close=c</option>
+                    <option value="w">crowded=w</option>
+                    <option value="d">distant=d</option>
+                    <option value="?">data missing</option>
+                </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Gill size</label>
+                <select class="form-select" name="gill_size" required aria-label="Default select example">
+                    <option style="display: none;" value="" selected>Select</option>
+                    <option value="b">broad=b</option>
+                    <option value="n">narrow=n</option>
+                </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Gill color</label>
+                <select class="form-select" name="gill_color" required aria-label="Default select example">
+                    <option style="display: none;" value="" selected>Select</option>
+                    <option value="k">black=k</option>
+                    <option value="n">brown=n</option>
+                    <option value="b">buff=b</option>
+                    <option value="h">chocolate=h</option>
+                    <option value="g">gray=g</option>
+                    <option value="r">green=r</option>
+                    <option value="o">orange=o</option>
+                    <option value="p">pink=p</option>
+                    <option value="u">purple=u</option>
+                    <option value="e">red=e</option>
+                    <option value="w">white=w</option>
+                    <option value="y">yellow=y</option>
+                </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Stalk shape</label>
+                <select class="form-select" name="stalk_shape" aria-label="Default select example">
+                    <option style="display: none;" value="" selected>Select</option>
+                    <option value="e">enlarging=e</option>
+                    <option value="t">tapering=t</option>
+                </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Stalk root</label>
+                <select class="form-select" name="stalk_root" aria-label="Default select example">
+                    <option style="display: none;" value="" selected>Select</option>
+                    <option value="b">bulbous=b</option>
+                    <option value="c">club=c</option>
+                    <option value="u">cup=u</option>
+                    <option value="e">equal=e</option>
+                    <option value="z">rhizomorphs=z</option>
+                    <option value="r">rooted=r</option>
+                    <option value="?">data missing</option>
+                </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Stalk surface above ring</label>
+                <select class="form-select" name="stalk_surface_above_ring" required aria-label="Default select example">
+                    <option style="display: none;" value="" selected>Select</option>
+                    <option value="f">fibrous=f</option>
+                    <option value="y">scaly=y</option>
+                    <option value="k">silky=k</option>
+                    <option value="s">smooth=s</option>
+                </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Stalk surface below ring</label>
+                <select class="form-select" name="stalk_surface_below_ring" required aria-label="Default select example">
+                    <option style="display: none;" value="" selected>Select</option>
+                    <option value="f">fibrous=f</option>
+                    <option value="y">scaly=y</option>
+                    <option value="k">silky=k</option>
+                    <option value="s">smooth=s</option>
+                </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Stalk color above ring</label>
+                <select class="form-select" name="stalk_color_above_ring" required aria-label="Default select example">
+                    <option style="display: none;" value="" selected>Select</option>
+                    <option value="n">brown=n</option>
+                    <option value="b">buff=b</option>
+                    <option value="c">cinnamon=c</option>
+                    <option value="g">gray=g</option>
+                    <option value="c">orange=o</option>
+                    <option value="p">pink=p</option>
+                    <option value="e">red=e</option>
+                    <option value="w">white=w</option>
+                    <option value="y">yellow=y</option>
+                </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Stalk color below ring</label>
+                <select class="form-select" name="stalk_color_below_ring" required aria-label="Default select example">
+                    <option style="display: none;" value="" selected>Select</option>
+                    <option value="n">brown=n</option>
+                    <option value="b">buff=b</option>
+                    <option value="c">cinnamon=c</option>
+                    <option value="g">gray=g</option>
+                    <option value="c">orange=o</option>
+                    <option value="p">pink=p</option>
+                    <option value="e">red=e</option>
+                    <option value="w">white=w</option>
+                    <option value="y">yellow=y</option>
+                </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Veil type</label>
+                <select class="form-select" name="veil_type" aria-label="Default select example">
+                    <option style="display: none;" value="" selected>Select</option>
+                    <option value="p">partial=p</option>
+                    <option value="u">universal=u</option>
+                </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Veil color</label>
+                <select class="form-select" name="veil_color" aria-label="Default select example">
+                    <option style="display: none;" value="" selected>Select</option>
+                    <option value="n">brown=n</option>
+                    <option value="o">orange=o</option>
+                    <option value="w">white=w</option>
+                    <option value="y">yellow=y</option>
+                </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Ring number</label>
+                <select class="form-select" name="ring_number" required aria-label="Default select example">
+                    <option style="display: none;" value="" selected>Select</option>
+                    <option value="1">none=n</option>
+                    <option value="2">one=o</option>
+                    <option value="3">two=t</option>
+                </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Ring type</label>
+                <select class="form-select" name="ring_type" required aria-label="Default select example">
+                    <option style="display: none;" value="" selected>Select</option>
+                    <option value="n">none=n</option>
+                    <option value="c">cobwebby=c</option>
+                    <option value="e">evanescent=e</option>
+                    <option value="f">flaring=f</option>
+                    <option value="l">large=l</option>
+                    <option value="p">pendant=p</option>
+                    <option value="s">sheathing=s</option>
+                    <option value="z">zone=z</option>
+                </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Spore print color</label>
+                <select class="form-select" name="spore_print_color" required aria-label="Default select example">
+                    <option style="display: none;" value="" selected>Select</option>
+                    <option value="k">black=k</option>
+                    <option value="n">brown=n</option>
+                    <option value="b">buff=b</option>
+                    <option value="h">chocolate=h</option>
+                    <option value="r">green=r</option>
+                    <option value="o">orange=o</option>
+                    <option value="u">purple=u</option>
+                    <option value="w">white=w</option>
+                    <option value="y">yellow=y</option>
+                </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Population</label>
+                <select class="form-select" name="population" required aria-label="Default select example">
+                    <option style="display: none;" value="" selected>Select</option>
+                    <option value="a">abundant=a</option>
+                    <option value="c">clustered=c</option>
+                    <option value="n">numerous=n</option>
+                    <option value="s">scattered=s</option>
+                    <option value="v">several=v</option>
+                    <option value="y">solitary=y</option>
+                </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Habitat</label>
+                <select class="form-select" name="habitat" aria-label="Default select example">
+                    <option style="display: none;" value="" selected>Select</option>
+                    <option value="g">grasses=g</option>
+                    <option value="l">leaves=l</option>
+                    <option value="m">meadows=m</option>
+                    <option value="p">paths=p</option>
+                    <option value="u">urban=u</option>
+                    <option value="w">waste=w</option>
+                    <option value="d">woods=d</option>
+                </select>
+        </div>
+        <div class="mb-3">
+            <input class="btn btn-primary button" type="submit" value="Predict" required />
+        </div>
+    </div>
+ </form>
+    <h2>
+       The Mushroom is {{results}}
+    </h2>
+</body>
+</html>

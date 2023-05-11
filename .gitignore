@@ -6,6 +6,7 @@ artifacts
 logs
 .idea/
 test2.py
+test.py
 
 # C extensions
 *.so

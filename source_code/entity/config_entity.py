@@ -17,9 +17,9 @@ ARTIFACTS_DIR = os.path.join(os.getcwd(), ARTIFACTS, f"{datetime.now().strftime(
 class DataIngestionConfig:
     DATA_INGESTION_DIR = os.path.join(ARTIFACTS_DIR, 'Data_Ingestion')
     base_data_path: str = os.path.join(DATA_INGESTION_DIR, BASE_DATA_FILE)
-    train_file_path: str = os.path.join(DATA_INGESTION_DIR, TRAIN_FILE)
-    test_file_path: str = os.path.join(DATA_INGESTION_DIR, TEST_FILE)
-    TEST_DATA_SIZE = 0.2  # test data is set 20% of base data
+    # train_file_path: str = os.path.join(DATA_INGESTION_DIR, TRAIN_FILE)
+    # test_file_path: str = os.path.join(DATA_INGESTION_DIR, TEST_FILE)
+    # TEST_DATA_SIZE = 0.2  # test data is set 20% of base data
     MISSING_VALUE_THRESHOLD = 30
 
 
@@ -30,6 +30,7 @@ class DataTransformationConfig:
     train_np_arr_path = os.path.join(DATA_TRANSFORMATION_DIR, TRAIN_FILE.replace('csv', 'npz'))
     test_np_arr_path = os.path.join(DATA_TRANSFORMATION_DIR, TEST_FILE.replace('csv', 'npz'))
     CORRELATION_THRESHOLD_VALUE = 20  # This value is a percentage
+    TEST_DATA_SIZE = 0.2  # test data is set 20% of base data
 
 
 @dataclass
