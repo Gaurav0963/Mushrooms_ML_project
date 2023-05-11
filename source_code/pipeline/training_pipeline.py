@@ -1,3 +1,4 @@
+import os
 import sys
 from source_code.components.data_ingestion import DataIngestion
 from source_code.components.data_transformation import DataTransformation
@@ -7,6 +8,7 @@ from source_code.exception import CustomException
 
 def start_training_pipeline():
     try:
+        os.chdir("../..")
         # Data-Ingestion
         data_ingestion = DataIngestion()
         data_ingestion_artifact = data_ingestion.initiate_data_ingestion()

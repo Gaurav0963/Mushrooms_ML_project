@@ -58,9 +58,7 @@ def predict_datapoint():
         results = predict_pipeline.model_predict(pred_df)
 
         return render_template('home.html', results=results)
-        # return render_template('predictions.html', results=results)
-        # return render_template('home_new.html', results=results, tables=[pred_df.to_html(classes='data')], titles=pred_df.columns.values)
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=6500, debug=True)
+    app.run(host="0.0.0.0")
