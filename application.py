@@ -6,12 +6,11 @@ from source_code.exception import CustomException
 from source_code.pipeline.prediction_pipeline import CustomData, PredictPipeline
 
 application = Flask(__name__)
-app = application
 
 
 # Route for a home page
-@app.route('/')
-@app.route('/home')
+@application.route('/')
+@application.route('/home')
 def index():
     try:
         logging.info("Home Page -> index.html")
@@ -20,7 +19,7 @@ def index():
         raise CustomException(e, sys)
 
 
-@app.route('/predictdata', methods=['GET', 'POST'])
+@application.route('/predictdata', methods=['GET', 'POST'])
 def predict_datapoint():
     if request.method == 'GET':
         return render_template('home.html')
@@ -61,4 +60,4 @@ def predict_datapoint():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0")
+    application.run(host="0.0.0.0")
