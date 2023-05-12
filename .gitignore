@@ -9,7 +9,7 @@ test2.py
 test.py
 templates/home_new.html
 templates/predictions.html
-
+static.zip
 
 # C extensions
 *.so
