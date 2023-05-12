@@ -22,5 +22,4 @@ statsmodels==0.14.0
 threadpoolctl==3.1.0
 tzdata==2023.3
 Werkzeug==2.3.4
-xgboost==1.7.5
 -e .
