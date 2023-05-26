@@ -1,4 +1,6 @@
 import sys
+
+import pandas as pd
 from flask import Flask, request, render_template
 
 from source_code.logger import logging
@@ -50,13 +52,14 @@ def predict_datapoint():
         )
 
         logging.info("Getting Input data as Pandas DataFrame")
-        pred_df = data.get_data_as_dataframe()
+        pred_dict = data.get_data_as_dataframe()
+        pred_df = pd.DataFrame(pred_dict)
 
         predict_pipeline = PredictPipeline()
 
         results = predict_pipeline.model_predict(pred_df)
 
-        return render_template('home.html', results=results)
+        return render_template('predictions.html', results=results, pred=pred_dict)
 
 
 if __name__ == "__main__":

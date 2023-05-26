@@ -1,5 +1,6 @@
 import sys
 import pandas as pd
+import json
 from source_code.logger import logging
 from source_code.utils import load_object
 from source_code.exception import CustomException
@@ -84,9 +85,9 @@ class CustomData:
         self.population = population
         self.habitat = habitat
 
-    def get_data_as_dataframe(self) -> pd.DataFrame:
+    def get_data_as_dataframe(self) -> dict:
         """
-        :return: Input data as Pandas DataFrame
+        :return: Input data as dictionary
         """
         try:
             custom_data_dict = {
@@ -113,8 +114,11 @@ class CustomData:
                 "population": [self.population],
                 "habitat": [self.habitat]
             }
+            with open('output.json', 'w', encoding='utf-8') as obj:
+                json.dump(custom_data_dict, obj, ensure_ascii=False, indent=4)
 
-            return pd.DataFrame(custom_data_dict)
+            # return pd.DataFrame(custom_data_dict)
+            return custom_data_dict
 
         except Exception as e:
             raise CustomException(e, sys)
